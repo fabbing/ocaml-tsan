@@ -699,6 +699,7 @@ ENDFUNCTION(G(caml_start_program))
 
 /* Raise an exception from OCaml */
 
+
 FUNCTION(G(caml_raise_exn))
 CFI_STARTPROC
 LBL(caml_raise_exn):
@@ -711,6 +712,12 @@ LBL(116):
 LBL(117):
         movq    %rsp, %r10        /* Save OCaml stack pointer */
         movq    %rax, %r12        /* Save exception bucket */
+#if defined (WITH_THREAD_SANITIZER)
+        movq    (%r10), C_ARG_1   /* arg 1: pc of raise */
+        leaq    8(%r10), C_ARG_2  /* arg 2: sp at raise */
+        movq    Caml_state(exn_handler), C_ARG_3 /* arg 3: sp of handler */
+        C_call  (GCALL(caml_tsan_emit_func_exit))
+#endif
         movq    Caml_state(c_stack), %rsp
         movq    %rax, C_ARG_1     /* arg 1: exception bucket */
         movq    (%r10), C_ARG_2   /* arg 2: pc of raise */
