@@ -679,6 +679,12 @@ runtime_BYTECODE_STATIC_LIBRARIES += runtime/libcamlruni.$(A)
 runtime_NATIVE_STATIC_LIBRARIES += runtime/libasmruni.$(A)
 endif
 
+ifeq "$(TSAN_RUNTIME)" "true"
+runtime_PROGRAMS += runtime/ocamlrunt$(EXE)
+runtime_BYTECODE_STATIC_LIBRARIES += runtime/libcamlrunt.$(A)
+runtime_NATIVE_STATIC_LIBRARIES += runtime/libasmrunt.$(A)
+endif
+
 ifeq "$(UNIX_OR_WIN32)" "unix"
 ifeq "$(SUPPORTS_SHARED_LIBRARIES)" "true"
 runtime_BYTECODE_STATIC_LIBRARIES += runtime/libcamlrun_pic.$(A)
@@ -843,6 +849,12 @@ runtime/ocamlruni$(EXE): runtime/prims.$(O) runtime/libcamlruni.$(A)
 	$(MKEXE) -o $@ $^ $(INSTRUMENTED_RUNTIME_LIBS) $(BYTECCLIBS)
 
 runtime/libcamlruni.$(A): $(libcamlruni_OBJECTS)
+	$(call MKLIB,$@, $^)
+
+runtime/ocamlrunt$(EXE): runtime/prims.$(O) runtime/libcamlrunt.$(A)
+	$(MKEXE) -o $@ $^ $(TSAN_RUNTIME_LIBS) $(BYTECCLIBS)
+
+runtime/libcamlrunt.$(A): $(libcamlrunt_OBJECTS)
 	$(call MKLIB,$@, $^)
 
 runtime/libcamlrun_pic.$(A): $(libcamlrunpic_OBJECTS)

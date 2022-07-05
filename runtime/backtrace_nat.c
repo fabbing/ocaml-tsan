@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(WITH_THREAD_SANITIZER) // FIXME include proper .h?
-extern void __tsan_func_exit(void);
+#if defined(WITH_THREAD_SANITIZER)
+extern void __tsan_func_exit(void); // FIXME proper include
 #endif
 
 #include "caml/alloc.h"
