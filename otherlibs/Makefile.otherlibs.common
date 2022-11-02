@@ -58,8 +58,8 @@ CLIBNAME ?= $(LIBNAME)
 ifeq "$(COBJS)" ""
 STUBSLIB=
 else
-STUBSLIB_BYTECODE=lib$(CLIBNAME).b.$(A)
-STUBSLIB_NATIVE=lib$(CLIBNAME).n.$(A)
+STUBSLIB_BYTECODE=lib$(CLIBNAME).$(A)
+STUBSLIB_NATIVE=lib$(CLIBNAME)nat.$(A)
 endif
 
 .PHONY: all allopt opt.opt # allopt and opt.opt are synonyms
@@ -80,18 +80,18 @@ $(LIBNAME).cmxa: $(CAMLOBJS_NAT)
 ifeq "$(COBJS)" ""
 	$(CAMLOPT) -o $@ -a -linkall $(CAMLOBJS_NAT) $(LINKOPTS)
 else
-	$(MKLIB) -o $(LIBNAME) -oc $(CLIBNAME) -ocamlopt '$(CAMLOPT)' -linkall \
+	$(MKLIB) -o $(LIBNAME) -oc $(CLIBNAME)nat -ocamlopt '$(CAMLOPT)' -linkall \
 	         $(CAMLOBJS_NAT) $(LINKOPTS)
 endif
 
 $(LIBNAME).cmxs: $(LIBNAME).cmxa $(STUBSLIB_NATIVE)
 	$(CAMLOPT_CMD) -shared -o $(LIBNAME).cmxs -I . $(LIBNAME).cmxa
 
-lib$(CLIBNAME).b.$(A): $(COBJS)
-	$(MKLIB_CMD) -oc $(CLIBNAME).b $(COBJS_BYTECODE) $(LDOPTS)
+lib$(CLIBNAME).$(A): $(COBJS)
+	$(MKLIB_CMD) -oc $(CLIBNAME) $(COBJS_BYTECODE) $(LDOPTS)
 
-lib$(CLIBNAME).n.$(A): $(COBJS)
-	$(MKLIB_CMD) -oc $(CLIBNAME).n $(COBJS_NATIVE) $(LDOPTS)
+lib$(CLIBNAME)nat.$(A): $(COBJS)
+	$(MKLIB_CMD) -oc $(CLIBNAME)nat $(COBJS_NATIVE) $(LDOPTS)
 
 INSTALL_LIBDIR_LIBNAME = $(INSTALL_LIBDIR)/$(LIBNAME)
 
